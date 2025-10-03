@@ -47,6 +47,7 @@ function analyzeSeo(DOMDocument $dom): array {
     $results = [];
     $tips = [];
 
+
     $addResult = static function (array &$results, string $label, string $value, string $status, string $hint): void {
         $results[] = [
             'label' => $label,
@@ -61,6 +62,7 @@ function analyzeSeo(DOMDocument $dom): array {
     $title = $titleNodes->length ? trim($titleNodes->item(0)->textContent) : '';
     $titleLength = mb_strlen($title);
     if ($titleLength === 0) {
+
         $addResult($results, 'Titel', 'Fehlt', 'rot', 'Der Title-Tag wird in den Suchergebnissen angezeigt und sollte das Hauptthema klar benennen.');
         $tips[] = 'Füge einen aussagekräftigen Title-Tag hinzu (50-60 Zeichen).';
     } elseif ($titleLength < 30 || $titleLength > 65) {
@@ -88,6 +90,7 @@ function analyzeSeo(DOMDocument $dom): array {
     $h1Nodes = $dom->getElementsByTagName('h1');
     $h1Count = $h1Nodes->length;
     if ($h1Count === 0) {
+
         $addResult($results, 'H1-Überschrift', 'Fehlt', 'rot', 'Die H1 ist die wichtigste Überschrift und sollte das Hauptthema der Seite wiedergeben.');
         $tips[] = 'Füge mindestens eine H1-Überschrift hinzu, die das Hauptthema beschreibt.';
     } elseif ($h1Count > 1) {
@@ -100,6 +103,7 @@ function analyzeSeo(DOMDocument $dom): array {
     // Canonical
     $canonicalNode = $xpath->query('//link[translate(@rel, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz") = "canonical"]/ @href');
     if ($canonicalNode->length === 0) {
+
         $addResult($results, 'Canonical', 'Fehlt', 'orange', 'Ein Canonical-Tag hilft dabei, doppelte Inhalte zusammenzuführen.');
         $tips[] = 'Setze einen Canonical-Link, um doppelte Inhalte zu vermeiden.';
     } else {
@@ -117,6 +121,7 @@ function analyzeSeo(DOMDocument $dom): array {
     }
     if ($imageNodes->length > 0) {
         if ($missingAlt > 0) {
+
             $addResult($results, 'Bilder', $missingAlt . ' ohne Alt-Text', 'orange', 'Alt-Texte beschreiben Bilder für Screenreader und liefern Kontext für Suchmaschinen.');
             $tips[] = 'Vergib Alt-Texte für alle Bilder zur besseren Barrierefreiheit und SEO.';
         } else {
@@ -131,6 +136,7 @@ function analyzeSeo(DOMDocument $dom): array {
         $words = array_filter(explode(' ', $bodyText));
         $wordCount = count($words);
         if ($wordCount < 300) {
+
             $addResult($results, 'Wortanzahl', $wordCount . ' Wörter', 'orange', 'Etwas mehr Text hilft, ein Thema umfassend abzudecken und relevante Keywords einzubauen.');
             $tips[] = 'Erhöhe den Textumfang auf mindestens 300 Wörter mit relevantem Inhalt.';
         } else {
@@ -143,6 +149,7 @@ function analyzeSeo(DOMDocument $dom): array {
     if ($robotsNode->length > 0) {
         $robotsValue = strtolower($robotsNode->item(0)->textContent);
         if (strpos($robotsValue, 'noindex') !== false) {
+
             $addResult($results, 'Meta-Robots', 'noindex gesetzt', 'rot', 'Mit "noindex" wird die Seite aktiv von der Google-Suche ausgeschlossen.');
             $tips[] = 'Entferne noindex, wenn die Seite indexiert werden soll.';
         } else {
@@ -175,6 +182,7 @@ if ($url) {
         }
     }
 }
+
 
 if ($sendMail && !$error) {
     if (!$analysis) {
@@ -277,6 +285,7 @@ if ($sendMail && !$error) {
             border-radius: 12px;
             margin-bottom: 20px;
         }
+
         .feedback {
             padding: 12px 20px;
             border-radius: 12px;
@@ -335,6 +344,7 @@ if ($sendMail && !$error) {
             margin: 0;
             padding-left: 20px;
         }
+
         .tips p {
             margin-top: 0;
             color: #1f4c6b;
@@ -388,6 +398,7 @@ if ($sendMail && !$error) {
 <body>
 <div class="container">
     <h1>🧠 Bunter SEO-Checker</h1>
+
     <p class="note">Gib eine URL ein und erhalte verständliche Hinweise dazu, wie Suchmaschinen deine Seite wahrnehmen – inklusive optionaler E-Mail-Zusammenfassung.</p>
     <form method="post">
         <input type="url" name="url" placeholder="https://beispiel.de" value="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8'); ?>" required>
@@ -397,6 +408,7 @@ if ($sendMail && !$error) {
     <?php if ($error): ?>
         <div class="error"><?= $error; ?></div>
     <?php endif; ?>
+
 
     <?php if ($mailFeedback): ?>
         <div class="feedback <?= $mailFeedback['type']; ?>"><?= htmlspecialchars($mailFeedback['message'], ENT_QUOTES, 'UTF-8'); ?></div>
@@ -423,6 +435,7 @@ if ($sendMail && !$error) {
                 <th>Element</th>
                 <th>Bewertung</th>
                 <th>Status</th>
+
                 <th>Hinweis</th>
             </tr>
             </thead>
@@ -442,6 +455,7 @@ if ($sendMail && !$error) {
     <?php if ($tips): ?>
         <div class="tips">
             <h2>Verbesserungstipps</h2>
+
             <p>Starte mit den roten Feldern und arbeite dich dann zu den orange markierten Empfehlungen vor.</p>
             <ul>
                 <?php foreach ($tips as $tip): ?>
@@ -450,6 +464,7 @@ if ($sendMail && !$error) {
             </ul>
         </div>
     <?php endif; ?>
+
 
     <?php if ($analysis && !$error): ?>
         <form method="post" class="email-form">
